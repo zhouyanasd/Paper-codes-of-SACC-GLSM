@@ -9,9 +9,9 @@
 """
 
 
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.networks.components import *
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.config import *
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.core import *
+from src.networks.components import *
+from src.config import *
+from src.core import *
 
 from brian2 import *
 

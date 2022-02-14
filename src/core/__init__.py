@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    The based methods used for CoE.
+    The based methods used for CCEA.
 
 :Author: Yan Zhou
 

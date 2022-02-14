@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    The network methods used for CoE.
+    The network methods used for CCEA.
 
 :Author: Yan Zhou
 

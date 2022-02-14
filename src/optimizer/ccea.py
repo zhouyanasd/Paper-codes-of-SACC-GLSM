@@ -6,9 +6,9 @@
 
 :License: BSD 3-Clause, see LICENSE file.
 """
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.core import BaseFunctions
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.optimizer.surrogate import TargetSpace, create_surrogate
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.optimizer import ga as ga
+from src.core import BaseFunctions
+from src.optimizer.surrogate import TargetSpace, create_surrogate
+from src.optimizer import ga as ga
 
 import time, pickle
 
@@ -71,13 +71,13 @@ class OptimizerBase(BaseFunctions):
         else:
             return self.f_p(LegV, FitnV)
 
-    def save_states(self, path='./coe.p'):
+    def save_states(self, path='./ccea.p'):
         with open(path, 'wb') as file:
             pickle.dump((self.B, self.F_B, self.ObjV, self.LegV, self.pop_trace, self.var_trace,
                          self.P, self.gen, self.end_time, np.random.get_state()),
                         file, pickle.HIGHEST_PROTOCOL)
 
-    def load_states(self, path='./coe.p'):
+    def load_states(self, path='./ccea.p'):
         with open(path, 'rb') as file:
             # 重新载入历史的进化数据
             self.B, self.F_B, self.ObjV, self.LegV, self.pop_trace, self.var_trace, \
@@ -369,7 +369,7 @@ class GA_surrogate(GA):
         self.deal_records()
 
 
-class CoE(CoorperateEvolutionBase):
+class CCEA(CoorperateEvolutionBase):
     def __init__(self, f, f_p, SubCom, ranges, borders, precisions, codes, scales, keys, random_state, maxormin):
         super().__init__(f, f_p, SubCom, ranges, borders, precisions, codes, scales, keys, random_state, maxormin)
 
@@ -482,7 +482,7 @@ class CoE(CoorperateEvolutionBase):
         self.deal_records()
 
 
-class CoE_surrogate(CoE):
+class CCEA_surrogate(CCEA):
     def __init__(self, f, f_p, SubCom, ranges, borders, precisions, codes, scales, keys, random_state, maxormin,
                  surrogate_type, init_points, LHS_path, **surrogate_parameters):
         super().__init__(f, f_p, SubCom, ranges, borders, precisions, codes, scales, keys, random_state, maxormin)
@@ -605,7 +605,7 @@ class CoE_surrogate(CoE):
         self.deal_records()
 
 
-class CoE_fitness_inheritance(CoE):
+class CCEA_fitness_inheritance(CCEA):
     def __init__(self, f, f_p, SubCom, ranges, borders, precisions, codes, scales, keys, random_state, maxormin,
                  p_fi):
         super().__init__(f, f_p, SubCom, ranges, borders, precisions, codes, scales, keys, random_state, maxormin)
@@ -720,21 +720,19 @@ if __name__ == "__main__":
     SubCom = np.array([[0, 1], [2, 3], [4, 5, 6, 7]])
     radom_state = 1
 
-    coe = CoE(rosen, None, SubCom, ranges, borders, precisions, codes, scales, keys, radom_state, maxormin=1)
-    coe.optimize(recopt=0.9, pm=0.2, MAXGEN=20, NIND=10, SUBPOP=1, GGAP=0.5,
+    ccea = CCEA(rosen, None, SubCom, ranges, borders, precisions, codes, scales, keys, radom_state, maxormin=1)
+    ccea.optimize(recopt=0.9, pm=0.2, MAXGEN=20, NIND=10, SUBPOP=1, GGAP=0.5,
                  selectStyle='tour', recombinStyle='reclin', distribute=False, load_continue=False)
-    coe.draw()
+    ccea.draw()
 
-
-    coe = CoE_fitness_inheritance(rosen, None, SubCom, ranges, borders, precisions, codes, scales, keys, radom_state, maxormin=1,
+    ccea = CCEA_fitness_inheritance(rosen, None, SubCom, ranges, borders, precisions, codes, scales, keys, radom_state, maxormin=1,
                                   p_fi = 0.5)
-    coe.optimize(recopt=1, pm=0.2, MAXGEN=40, NIND=10, SUBPOP=1, GGAP=0.5,
+    ccea.optimize(recopt=1, pm=0.2, MAXGEN=40, NIND=10, SUBPOP=1, GGAP=0.5,
                  selectStyle='tour', recombinStyle='reclin', distribute=False, load_continue=False)
-    coe.draw()
+    ccea.draw()
 
-
-    coe_surrogate = CoE_surrogate(rosen, None, SubCom, ranges, borders, precisions, codes, scales, keys, radom_state, maxormin=1,
+    ccea_surrogate = CCEA_surrogate(rosen, None, SubCom, ranges, borders, precisions, codes, scales, keys, radom_state, maxormin=1,
                         surrogate_type = 'rf', init_points = 100, LHS_path = None, n_Q = 10, n_estimators=100, c_features = 4)
-    coe_surrogate.optimize(recopt=0.9, pm=0.2, MAXGEN=820, NIND=20, SUBPOP=1, GGAP=0.5, online=True, eva=2, interval=10,
+    ccea_surrogate.optimize(recopt=0.9, pm=0.2, MAXGEN=820, NIND=20, SUBPOP=1, GGAP=0.5, online=True, eva=2, interval=10,
             selectStyle='tour', recombinStyle='reclin', distribute=False, load_continue = False)
-    coe_surrogate.draw()
+    ccea_surrogate.draw()

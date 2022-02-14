@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    The dataloader methods used for CoE.
+    The dataloader methods used for CCEA.
 
 :Author: Yan Zhou
 
@@ -9,7 +9,6 @@
 
 from .KTH_dataloader import *
 from .UCI_dataloader import *
-from .BN_dataloader import *
 from .NMNIST_dataloader import *
 
 

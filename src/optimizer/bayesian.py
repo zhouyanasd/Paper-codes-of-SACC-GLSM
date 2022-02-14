@@ -1,7 +1,7 @@
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.optimizer.de import DiffEvol
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.optimizer.surrogate import Surrogate
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.optimizer.utility_functions import UtilityFunction
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.optimizer.random_forest import RandomForestRegressor
+from src.optimizer.de import DiffEvol
+from src.optimizer.surrogate import Surrogate
+from src.optimizer.utility_functions import UtilityFunction
+from src.optimizer.random_forest import RandomForestRegressor
 
 import numpy as np
 from sklearn.gaussian_process.kernels import Matern

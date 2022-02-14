@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    The fundamental algorithms used in CoE.
+    The fundamental algorithms used in CCEA.
 
 :Author: Yan Zhou
 
 :License: BSD 3-Clause, see LICENSE file.
 """
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.core import BaseFunctions
+from src.core import BaseFunctions
 
 from enum import Enum
 from collections import OrderedDict

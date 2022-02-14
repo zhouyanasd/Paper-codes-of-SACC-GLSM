@@ -2,7 +2,7 @@
 """
     The Neural Structure Search (NAS) of Liquid State Machine
     (LSM) for action recognition. The optimization method adopted
-    here is Cooperative Co-evolution (CoE).
+    here is Cooperative Co-evolution (CCEA).
 
 :Author: Yan Zhou
 
@@ -32,9 +32,9 @@ sys.path.append(project_dir)
 data_path = project_dir_sever+'/Data/KTH/'
 LHS_path = exec_dir+'/LHS_KTH.dat'
 
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src import *
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.config import *
-from Brian2_scripts.sim_brian_paper.sim_brian_paper_CoE.src.ray_config import *
+from src import *
+from src.config import *
+from src.ray_config import *
 
 from brian2 import *
 from sklearn.preprocessing import MinMaxScaler
@@ -84,11 +84,11 @@ np_state = np.random.get_state()
 # -----simulation parameter setting-------
 core = 60
 
-method = 'CoE_rf_w'
+method = 'CCEA_rf_w'
 total_eva = 600
 load_continue = False
 
-DataName = 'coe_[15,5,4]'
+DataName = 'ccea_[15,5,4]'
 
 origin_size = (120, 160)
 pool_size = (5, 5)
@@ -316,58 +316,41 @@ if __name__ == '__main__':
     parameters_search.func.load_continue = load_continue
 
 # -------parameters search---------------
-    if method == 'BO':
-        optimizer = RandomForestRegressor_BayesianOptimization(
-            f=parameters_search,
-            keys = decoder.get_keys,
-            ranges = decoder.get_ranges,
-            borders = decoder.get_borders,
-            precisions = decoder.get_precisions,
-            random_state=np.random.RandomState(),
-        )
-        optimizer.minimize(
-            LHS_path=LHS_path,
-            init_points=100,
-            is_LHS=True,
-            n_iter=500,
-            online=True,
-        )
-
-    elif method == 'CoE':
-        coe = CoE(parameters_search, None, decoder.get_SubCom, decoder.get_ranges, decoder.get_borders,
+    if method == 'CCEA':
+        ccea = CCEA(parameters_search, None, decoder.get_SubCom, decoder.get_ranges, decoder.get_borders,
                   decoder.get_precisions, decoder.get_codes, decoder.get_scales, decoder.get_keys,
                   random_state = seed, maxormin=1)
-        coe.optimize(recopt=0.9, pm=0.2, MAXGEN=9+2, NIND=10, SUBPOP=1, GGAP=0.5,
+        ccea.optimize(recopt=0.9, pm=0.2, MAXGEN=9+2, NIND=10, SUBPOP=1, GGAP=0.5,
                      selectStyle='tour', recombinStyle='reclin',
                      distribute=False, load_continue = load_continue)
 
-    elif method == 'CoE_fi':
-        coe = CoE_fitness_inheritance(parameters_search, None, decoder.get_SubCom, decoder.get_ranges, decoder.get_borders,
+    elif method == 'CCEA_fi':
+        ccea = CCEA_fitness_inheritance(parameters_search, None, decoder.get_SubCom, decoder.get_ranges, decoder.get_borders,
                   decoder.get_precisions, decoder.get_codes, decoder.get_scales, decoder.get_keys,
                   random_state = seed, maxormin=1,
                   p_fi=0.5)
-        coe.optimize(recopt=1, pm=0.2, MAXGEN=19+2, NIND=10, SUBPOP=1, GGAP=0.5,
+        ccea.optimize(recopt=1, pm=0.2, MAXGEN=19+2, NIND=10, SUBPOP=1, GGAP=0.5,
                      selectStyle='tour', recombinStyle='reclin',
                      distribute=False, load_continue = load_continue)
 
-    elif method == 'CoE_rf_w':
-        coe = CoE_surrogate(parameters_search, None, decoder.get_SubCom, decoder.get_ranges, decoder.get_borders,
+    elif method == 'CCEA_rf_w':
+        ccea = CCEA_surrogate(parameters_search, None, decoder.get_SubCom, decoder.get_ranges, decoder.get_borders,
                             decoder.get_precisions, decoder.get_codes, decoder.get_scales, decoder.get_keys,
                             random_state = seed, maxormin=1,
                             surrogate_type='rf_w', init_points=100, LHS_path=LHS_path,
                             n_Q = 10, n_estimators=100, c_features = np.floor(decoder.get_dim*0.5).astype(np.int))
-        coe.optimize(recopt=0.9, pm=0.2, MAXGEN=450+50, NIND=20, SUBPOP=1, GGAP=0.5,
+        ccea.optimize(recopt=0.9, pm=0.2, MAXGEN=450+50, NIND=20, SUBPOP=1, GGAP=0.5,
                      online=True, eva=2, interval=10,
                      selectStyle='tour', recombinStyle='reclin',
                      distribute=False, load_continue = load_continue)
 
-    elif method == 'CoE_rf':
-        coe = CoE_surrogate(parameters_search, None, decoder.get_SubCom, decoder.get_ranges, decoder.get_borders,
+    elif method == 'CCEA_rf':
+        ccea = CCEA_surrogate(parameters_search, None, decoder.get_SubCom, decoder.get_ranges, decoder.get_borders,
                             decoder.get_precisions, decoder.get_codes, decoder.get_scales, decoder.get_keys,
                             random_state = seed, maxormin=1,
                             surrogate_type='rf', init_points=100, LHS_path=LHS_path,
                             acq='lcb', kappa=2.576, xi=0.0, n_estimators=100, min_variance=0.0)
-        coe.optimize(recopt=0.9, pm=0.2, MAXGEN=450+50, NIND=20, SUBPOP=1, GGAP=0.5,
+        ccea.optimize(recopt=0.9, pm=0.2, MAXGEN=450+50, NIND=20, SUBPOP=1, GGAP=0.5,
                      online=True, eva=2, interval=10,
                      selectStyle='tour', recombinStyle='reclin',
                      distribute=False, load_continue = load_continue)
